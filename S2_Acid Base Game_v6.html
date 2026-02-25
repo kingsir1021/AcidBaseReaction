@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>酸鹼拼拼樂 5.0 - 終極挑戰版</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 15px;
+            touch-action: manipulation; 
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.8em;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        
+        .container {
+            background-color: white;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        #start-screen { display: block; }
+        .category-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .category-btn {
+            padding: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .category-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .category-btn:active { transform: translateY(0); }
+        .btn-base { background-color: #3498db; }
+        .btn-metal { background-color: #e67e22; }
+        .btn-carbonate { background-color: #9b59b6; }
+        .btn-mixed { background-color: #e74c3c; border: 2px solid #c0392b; } /* 綜合測試用顯眼的紅色 */
+
+        #game-screen { display: none; }
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 10px 20px;
+            background-color: #e8f4f8;
+            border-radius: 10px;
+            color: #2980b9;
+        }
+        .back-btn {
+            background-color: #7f8c8d;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .equation-area {
+            font-size: 1.5em;
+            margin: 20px 0;
+            padding: 20px 15px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-weight: bold;
+        }
+        .eq-text { color: #2c3e50; line-height: 2; }
+        .blank {
+            min-width: 100px;
+            height: 45px;
+            border: 3px dashed #bdc3c7;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            cursor: pointer;
+            padding: 0 10px;
+            color: #e74c3c;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .blank:hover {
+            border-color: #e74c3c;
+            background-color: #fdf1f0;
+        }
+        .options-area {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            min-height: 100px;
+            align-content: flex-start;
+        }
+        .option-btn {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            background-color: #34495e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+            user-select: none;
+        }
+        .option-btn:active { transform: scale(0.95); }
+        .action-btn {
+            padding: 12px 35px;
+            font-size: 1.2em;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            user-select: none;
+        }
+        .action-btn:hover { background-color: #27ae60; }
+        
+        #feedback {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 15px 0;
+            min-height: 30px;
+        }
+        .correct { color: #2ecc71; }
+        .incorrect { color: #e74c3c; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5em; }
+            .info-bar { font-size: 1em; padding: 8px 10px; flex-wrap: wrap; gap: 10px;}
+            .equation-area { font-size: 1.2em; padding: 15px 5px; }
+            .blank { min-width: 80px; height: 40px; font-size: 0.9em; }
+            .option-btn { font-size: 1em; padding: 10px 15px; }
+            .action-btn { width: 100%; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🧪 酸鹼拼拼樂 5.0</h1>
+    <p class="subtitle">化學文字方程式挑戰 (答對 +10分，答錯 -5分)</p>
+    
+    <div class="container">
+        
+        <div id="start-screen">
+            <h2 style="color: #2c3e50;">請選擇你要挑戰的模式：</h2>
+            <div class="category-container">
+                <button class="category-btn btn-base" onclick="startGame('acidBase')">
+                    1️⃣ 酸 + 鹼 / 金屬氧化物<br><span style="font-size:0.7em; font-weight:normal;">(5題｜生成：鹽 + 水)</span>
+                </button>
+                <button class="category-btn btn-metal" onclick="startGame('acidMetal')">
+                    2️⃣ 酸 + 金屬<br><span style="font-size:0.7em; font-weight:normal;">(5題｜生成：鹽 + 氫氣)</span>
+                </button>
+                <button class="category-btn btn-carbonate" onclick="startGame('acidCarbonate')">
+                    3️⃣ 酸 + 碳酸鹽<br><span style="font-size:0.7em; font-weight:normal;">(5題｜生成：鹽 + 水 + 二氧化碳)</span>
+                </button>
+                <button class="category-btn btn-mixed" onclick="startGame('mixed')">
+                    🌟 綜合終極小測<br><span style="font-size:0.7em; font-weight:normal;">(10題｜混合所有題型，考驗綜合能力！)</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="game-screen">
+            <div class="info-bar">
+                <button class="back-btn" onclick="goHome()">⬅️ 返回選單</button>
+                <span id="question-counter">題數: 1 / 10</span>
+                <span id="score-display">分數: 0</span>
+            </div>
+
+            <p style="color: #7f8c8d; font-size: 0.9em; margin-bottom: 15px;">💡 提示：點擊下方選項填入。若要更改，<strong>點擊上方虛線框</strong>即可退回。</p>
+
+            <div class="equation-area" id="equation-area"></div>
+            <div class="options-area" id="options-area"></div>
+            <div id="feedback"></div>
+
+            <button class="action-btn" id="check-btn" onclick="checkAnswer()">檢查答案</button>
+            <button class="action-btn" id="next-btn" onclick="nextQuestion()" style="display: none;">下一題</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 題庫分類 ---
+        const questionBanks = {
+            acidBase: [
+                { prefix: "氫氯酸 + 氫氧化鈉 → ", suffix: "", answers: ["氯化鈉", "水"], options: ["氯化鈉", "水", "硫酸鈉", "二氧化碳", "氫氣", "氧氣"] },
+                { prefix: "硫酸 + 氧化銅 → ", suffix: "", answers: ["硫酸銅", "水"], options: ["氯化銅", "水", "硫酸銅", "二氧化碳", "氫氣", "氫氧化銅"] },
+                { prefix: "硝酸 + 氫氧化鉀 → ", suffix: "", answers: ["硝酸鉀", "水"], options: ["硝酸鈣", "水", "硝酸鉀", "二氧化碳", "氯化鉀", "氫氣"] },
+                { prefix: "氫氯酸 + 氫氧化鈣 → ", suffix: "", answers: ["氯化鈣", "水"], options: ["氯化鈣", "水", "硫酸鈣", "二氧化碳", "氫氣", "鈣"] },
+                { prefix: "", suffix: " → 氯化鉀 + 水", answers: ["氫氯酸", "氫氧化鉀"], options: ["氫氯酸", "硫酸", "硝酸", "氫氧化鉀", "氫氧化鈉", "碳酸鉀"] },
+                { prefix: "", suffix: " → 硫酸鈉 + 水", answers: ["硫酸", "氫氧化鈉"], options: ["氫氯酸", "硫酸", "硝酸", "氫氧化鉀", "氫氧化鈉", "氧化鈉"] }
+            ],
+            acidMetal: [
+                { prefix: "氫氯酸 + 鎂 → ", suffix: "", answers: ["氯化鎂", "氫氣"], options: ["氯化鎂", "水", "硫酸鎂", "二氧化碳", "氫氣", "氧氣"] },
+                { prefix: "硫酸 + 鋅 → ", suffix: "", answers: ["硫酸鋅", "氫氣"], options: ["氯化鋅", "水", "硫酸鋅", "二氧化碳", "氫氣", "氧氣"] },
+                { prefix: "氫氯酸 + 鐵 → ", suffix: "", answers: ["氯化鐵", "氫氣"], options: ["氯化鐵", "水", "硫酸鐵", "二氧化碳", "氫氣", "氧氣"] },
+                { prefix: "硫酸 + 鎂 → ", suffix: "", answers: ["硫酸鎂", "氫氣"], options: ["氯化鎂", "水", "硫酸鎂", "二氧化碳", "氫氣", "氧氣"] },
+                { prefix: "", suffix: " → 硫酸鋅 + 氫氣", answers: ["硫酸", "鋅"], options: ["氫氯酸", "硫酸", "硝酸", "鋅", "鎂", "氧化鋅"] },
+                { prefix: "", suffix: " → 氯化鎂 + 氫氣", answers: ["氫氯酸", "鎂"], options: ["氫氯酸", "硫酸", "硝酸", "鋅", "鎂", "碳酸鎂"] }
+            ],
+            acidCarbonate: [
+                { prefix: "氫氯酸 + 碳酸鈣 → ", suffix: "", answers: ["氯化鈣", "水", "二氧化碳"], options: ["氯化鈣", "水", "碳酸", "二氧化碳", "氫氣", "氯化鈉"] },
+                { prefix: "硫酸 + 碳酸鈉 → ", suffix: "", answers: ["硫酸鈉", "水", "二氧化碳"], options: ["氯化鈉", "水", "硫酸鈉", "二氧化碳", "二氧化硫", "氫氣"] },
+                { prefix: "硝酸 + 碳酸銅 → ", suffix: "", answers: ["硝酸銅", "水", "二氧化碳"], options: ["氯化銅", "水", "硝酸銅", "二氧化碳", "氫氣", "氧氣"] },
+                { prefix: "", suffix: " → 氯化鎂 + 水 + 二氧化碳", answers: ["氫氯酸", "碳酸鎂"], options: ["氫氯酸", "硫酸", "硝酸", "氫氧化鎂", "碳酸鎂", "氧化鎂"] },
+                { prefix: "", suffix: " → 硝酸鈉 + 水 + 二氧化碳", answers: ["硝酸", "碳酸鈉"], options: ["氫氯酸", "硫酸", "硝酸", "氫氧化鈉", "碳酸鈉", "氧化鈉"] }
+            ]
+        };
+
+        let currentQuestions = []; 
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswers = []; 
+        let selectedOptionIds = []; 
+
+        const POINTS_CORRECT = 10;
+        const POINTS_WRONG = 5;
+
+        // --- 介面切換與題目生成邏輯 ---
+        function startGame(categoryKey) {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+            
+            let bank = [];
+            let numQuestionsToDraw = 5; // 預設單一分類抽 5 題
+
+            // 判斷是否為綜合小測
+            if (categoryKey === 'mixed') {
+                // 將所有題庫合併
+                bank = [
+                    ...questionBanks.acidBase, 
+                    ...questionBanks.acidMetal, 
+                    ...questionBanks.acidCarbonate
+                ];
+                numQuestionsToDraw = 10; // 綜合測試抽 10 題
+            } else {
+                bank = questionBanks[categoryKey];
+            }
+            
+            // 隨機打亂並抽取指定數量的題目
+            currentQuestions = [...bank].sort(() => Math.random() - 0.5).slice(0, numQuestionsToDraw);
+            
+            currentQuestionIndex = 0;
+            score = 0;
+            updateScore();
+            loadQuestion();
+        }
+
+        function goHome() {
+            document.getElementById('start-screen').style.display = 'block';
+            document.getElementById('game-screen').style.display = 'none';
+        }
+
+        // --- 遊戲運作邏輯 ---
+        function loadQuestion() {
+            const q = currentQuestions[currentQuestionIndex];
+            
+            selectedAnswers = new Array(q.answers.length).fill(null);
+            selectedOptionIds = new Array(q.answers.length).fill(null);
+            
+            document.getElementById('question-counter').innerText = `題數: ${currentQuestionIndex + 1} / ${currentQuestions.length}`;
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('check-btn').style.display = "inline-block";
+            document.getElementById('next-btn').style.display = "none";
+
+            const eqArea = document.getElementById('equation-area');
+            eqArea.innerHTML = ""; 
+
+            // 構建方程式畫面 (使用穩定版 createElement)
+            if (q.prefix) {
+                const prefixSpan = document.createElement('span');
+                prefixSpan.className = 'eq-text';
+                prefixSpan.innerText = q.prefix;
+                eqArea.appendChild(prefixSpan);
+            }
+            
+            for (let i = 0; i < q.answers.length; i++) {
+                const blank = document.createElement('div');
+                blank.className = 'blank';
+                blank.id = `blank-${i}`;
+                blank.onclick = () => removeAnswer(i); 
+                eqArea.appendChild(blank);
+                
+                if (i < q.answers.length - 1) {
+                    const plusSpan = document.createElement('span');
+                    plusSpan.className = 'eq-text';
+                    plusSpan.innerText = ' + ';
+                    eqArea.appendChild(plusSpan);
+                }
+            }
+
+            if (q.suffix) {
+                const suffixSpan = document.createElement('span');
+                suffixSpan.className = 'eq-text';
+                suffixSpan.innerText = q.suffix;
+                eqArea.appendChild(suffixSpan);
+            }
+
+            // 構建選項按鈕
+            const optArea = document.getElementById('options-area');
+            optArea.innerHTML = "";
+            let shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+            
+            shuffledOptions.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.id = `opt-${index}`;
+                btn.innerText = opt;
+                btn.onclick = () => selectAnswer(opt, btn.id);
+                optArea.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(word, optId) {
+            const emptyIndex = selectedAnswers.indexOf(null);
+            
+            if (emptyIndex !== -1) {
+                selectedAnswers[emptyIndex] = word;
+                selectedOptionIds[emptyIndex] = optId; 
+                
+                document.getElementById(`blank-${emptyIndex}`).innerText = word;
+                document.getElementById(optId).style.visibility = 'hidden'; 
+            }
+        }
+
+        function removeAnswer(index) {
+            if (selectedAnswers[index] !== null) {
+                const optId = selectedOptionIds[index]; 
+                
+                selectedAnswers[index] = null;
+                selectedOptionIds[index] = null;
+                document.getElementById(`blank-${index}`).innerText = "";
+                
+                if (optId && document.getElementById(optId)) {
+                    document.getElementById(optId).style.visibility = 'visible';
+                }
+            }
+        }
+
+        function checkAnswer() {
+            if (selectedAnswers.includes(null)) {
+                showFeedback("⚠️ 請填滿所有空格再檢查！", false);
+                return;
+            }
+
+            const q = currentQuestions[currentQuestionIndex];
+            const sortedSelected = [...selectedAnswers].sort();
+            const sortedCorrect = [...q.answers].sort();
+
+            const isCorrect = JSON.stringify(sortedSelected) === JSON.stringify(sortedCorrect);
+
+            if (isCorrect) {
+                showFeedback(`✅ 答對了！獲得 ${POINTS_CORRECT} 分！`, true);
+                score += POINTS_CORRECT;
+                updateScore();
+                
+                document.getElementById('check-btn').style.display = "none";
+                document.getElementById('next-btn').style.display = "inline-block";
+                
+                q.answers.forEach((_, i) => {
+                    const blank = document.getElementById(`blank-${i}`);
+                    blank.onclick = null;
+                    blank.style.cursor = 'default';
+                });
+            } else {
+                score = Math.max(0, score - POINTS_WRONG); 
+                updateScore();
+                showFeedback(`❌ 錯誤！扣除 ${POINTS_WRONG} 分。點擊錯誤的空格退回再試！`, false);
+            }
+        }
+
+        function showFeedback(msg, isCorrect) {
+            const fb = document.getElementById('feedback');
+            fb.innerText = msg;
+            fb.className = isCorrect ? 'correct' : 'incorrect';
+        }
+
+        function updateScore() {
+            document.getElementById('score-display').innerText = `分數: ${score}`;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < currentQuestions.length) {
+                loadQuestion();
+            } else {
+                showGameOver();
+            }
+        }
+
+        function showGameOver() {
+            // 動態計算滿分 (因為綜合測驗是10題，單項是5題)
+            const maxScore = currentQuestions.length * POINTS_CORRECT;
+            let message = "";
+            
+            if (score === maxScore) {
+                message = "太神了！這部分的反應你已經完全掌握！👨‍🔬";
+            } else if (score >= maxScore * 0.7) {
+                message = "表現得非常好！繼續保持！👍";
+            } else {
+                message = "不要灰心，再挑戰一次一定會更好！💪";
+            }
+
+            const eqArea = document.getElementById('equation-area');
+            const optArea = document.getElementById('options-area');
+            
+            eqArea.innerHTML = `
+                <div style="text-align:center; width: 100%;">
+                    <h2 style="color: #2c3e50;">🎉 測驗完成！</h2>
+                    <p style="font-size: 1.2em;">本關分數：<strong style="color: #e74c3c;">${score}</strong> / ${maxScore}</p>
+                    <p style="font-size: 1em; color: #2980b9;">${message}</p>
+                </div>
+            `;
+            
+            optArea.innerHTML = "";
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('check-btn').style.display = "none";
+            document.getElementById('next-btn').style.display = "none";
+        }
+    </script>
+</body>
+</html>
